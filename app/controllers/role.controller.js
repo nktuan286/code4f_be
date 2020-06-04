@@ -13,17 +13,17 @@ const emailer = require('../middleware/emailer')
  * @param {Object} req - request object
  */
 const createItem = async req => {
-    return new Promise((resolve, reject) => {
-        const role = new model({
-            name: req.name
-        })
-        role.save((err, item) => {
-            if (err) {
-                reject(utils.buildErrObject(422, err.message))
-            }
-            resolve(item.toObject())
-        })
+  return new Promise((resolve, reject) => {
+    const role = new model({
+      name: req.name
     })
+    role.save((err, item) => {
+      if (err) {
+        reject(utils.buildErrObject(422, err.message))
+      }
+      resolve(item.toObject())
+    })
+  })
 }
 
 /********************
@@ -36,12 +36,12 @@ const createItem = async req => {
  * @param {Object} res - response object
  */
 exports.getItems = async (req, res) => {
-    try {
-        const query = await db.checkQueryString(req.query)
-        res.status(200).json(await db.getItems(req, model, query))
-    } catch (error) {
-        utils.handleError(res, error)
-    }
+  try {
+    const query = await db.checkQueryString(req.query)
+    res.status(200).json(await db.getItems(req, model, query))
+  } catch (error) {
+    utils.handleError(res, error)
+  }
 }
 
 /**
@@ -50,13 +50,13 @@ exports.getItems = async (req, res) => {
  * @param {Object} res - response object
  */
 exports.getItem = async (req, res) => {
-    try {
-        req = matchedData(req)
-        const id = await utils.isIDGood(req.id)
-        res.status(200).json(await db.getItem(id, model))
-    } catch (error) {
-        utils.handleError(res, error)
-    }
+  try {
+    req = matchedData(req)
+    const id = await utils.isIDGood(req.id)
+    res.status(200).json(await db.getItem(id, model))
+  } catch (error) {
+    utils.handleError(res, error)
+  }
 }
 
 /**
@@ -65,13 +65,13 @@ exports.getItem = async (req, res) => {
  * @param {Object} res - response object
  */
 exports.updateItem = async (req, res) => {
-    try {
-        req = matchedData(req)
-        const id = await utils.isIDGood(req.id)
-        res.status(200).json(await db.updateItem(id, model, req))
-    } catch (error) {
-        utils.handleError(res, error)
-    }
+  try {
+    req = matchedData(req)
+    const id = await utils.isIDGood(req.id)
+    res.status(200).json(await db.updateItem(id, model, req))
+  } catch (error) {
+    utils.handleError(res, error)
+  }
 }
 
 /**
@@ -80,13 +80,13 @@ exports.updateItem = async (req, res) => {
  * @param {Object} res - response object
  */
 exports.createItem = async (req, res) => {
-    try {
-        req = matchedData(req)
-        const item = await createItem(req)
-        res.status(201).json(item)
-    } catch (error) {
-        utils.handleError(res, error)
-    }
+  try {
+    req = matchedData(req)
+    const item = await createItem(req)
+    res.status(201).json(item)
+  } catch (error) {
+    utils.handleError(res, error)
+  }
 }
 
 /**
@@ -95,11 +95,11 @@ exports.createItem = async (req, res) => {
  * @param {Object} res - response object
  */
 exports.deleteItem = async (req, res) => {
-    try {
-        req = matchedData(req)
-        const id = await utils.isIDGood(req.id)
-        res.status(200).json(await db.deleteItem(id, model))
-    } catch (error) {
-        utils.handleError(res, error)
-    }
+  try {
+    req = matchedData(req)
+    const id = await utils.isIDGood(req.id)
+    res.status(200).json(await db.deleteItem(id, model))
+  } catch (error) {
+    utils.handleError(res, error)
+  }
 }

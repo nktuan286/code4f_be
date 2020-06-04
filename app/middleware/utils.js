@@ -7,11 +7,11 @@ const { validationResult } = require('express-validator')
  * @param {string} file - filename
  */
 exports.removeExtensionFromFile = file => {
-    return file
-        .split('.')
-        .slice(0, -1)
-        .join('.')
-        .toString()
+  return file
+    .split('.')
+    .slice(0, -1)
+    .join('.')
+    .toString()
 }
 
 /**
@@ -31,7 +31,7 @@ exports.getBrowserInfo = req => req.headers['user-agent']
  * @param {*} req - request object
  */
 exports.getCountry = req =>
-    req.headers['cf-ipcountry'] ? req.headers['cf-ipcountry'] : 'XX'
+  req.headers['cf-ipcountry'] ? req.headers['cf-ipcountry'] : 'XX'
 
 /**
  * Handles error by printing to console in development env and builds and sends an error response
@@ -39,16 +39,16 @@ exports.getCountry = req =>
  * @param {Object} err - error object
  */
 exports.handleError = (res, err) => {
-    // Prints error in console
-    if (process.env.NODE_ENV === 'development') {
-        console.log(err)
+  // Prints error in console
+  if (process.env.NODE_ENV === 'development') {
+    console.log(err)
+  }
+  // Sends error to user
+  res.status(err.code).json({
+    errors: {
+      msg: err.message
     }
-    // Sends error to user
-    res.status(err.code).json({
-        errors: {
-            msg: err.message
-        }
-    })
+  })
 }
 
 /**
@@ -57,10 +57,10 @@ exports.handleError = (res, err) => {
  * @param {string} message - error text
  */
 exports.buildErrObject = (code, message) => {
-    return {
-        code,
-        message
-    }
+  return {
+    code,
+    message
+  }
 }
 
 /**
@@ -70,15 +70,15 @@ exports.buildErrObject = (code, message) => {
  * @param {Object} next - next object
  */
 exports.validationResult = (req, res, next) => {
-    try {
-        validationResult(req).throw()
-        if (req.body.email) {
-            req.body.email = req.body.email.toLowerCase()
-        }
-        return next()
-    } catch (err) {
-        return this.handleError(res, this.buildErrObject(422, err.array()))
+  try {
+    validationResult(req).throw()
+    if (req.body.email) {
+      req.body.email = req.body.email.toLowerCase()
     }
+    return next()
+  } catch (err) {
+    return this.handleError(res, this.buildErrObject(422, err.array()))
+  }
 }
 
 /**
@@ -86,9 +86,9 @@ exports.validationResult = (req, res, next) => {
  * @param {string} message - success text
  */
 exports.buildSuccObject = message => {
-    return {
-        msg: message
-    }
+  return {
+    msg: message
+  }
 }
 
 /**
@@ -96,12 +96,12 @@ exports.buildSuccObject = message => {
  * @param {string} id - id to check
  */
 exports.isIDGood = async id => {
-    return new Promise((resolve, reject) => {
-        const goodID = mongoose.Types.ObjectId.isValid(id)
-        return goodID
-            ? resolve(id)
-            : reject(this.buildErrObject(422, 'ID_MALFORMED'))
-    })
+  return new Promise((resolve, reject) => {
+    const goodID = mongoose.Types.ObjectId.isValid(id)
+    return goodID
+      ? resolve(id)
+      : reject(this.buildErrObject(422, 'ID_MALFORMED'))
+  })
 }
 
 /**
@@ -112,12 +112,12 @@ exports.isIDGood = async id => {
  * @param {string} message - message
  */
 exports.itemNotFound = (err, item, reject, message) => {
-    if (err) {
-        reject(this.buildErrObject(422, err.message))
-    }
-    if (!item) {
-        reject(this.buildErrObject(404, message))
-    }
+  if (err) {
+    reject(this.buildErrObject(422, err.message))
+  }
+  if (!item) {
+    reject(this.buildErrObject(404, message))
+  }
 }
 
 /**
@@ -128,10 +128,10 @@ exports.itemNotFound = (err, item, reject, message) => {
  * @param {string} message - message
  */
 exports.itemAlreadyExists = (err, item, reject, message) => {
-    if (err) {
-        reject(this.buildErrObject(422, err.message))
-    }
-    if (item) {
-        reject(this.buildErrObject(422, message))
-    }
+  if (err) {
+    reject(this.buildErrObject(422, err.message))
+  }
+  if (item) {
+    reject(this.buildErrObject(422, message))
+  }
 }

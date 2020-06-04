@@ -6,7 +6,7 @@ const router = express.Router()
 require('../../config/passport')
 const passport = require('passport')
 const requireAuth = passport.authenticate('jwt', {
-    session: false
+  session: false
 })
 const trimRequest = require('trim-request')
 
@@ -18,59 +18,59 @@ const trimRequest = require('trim-request')
  * Get items route
  */
 router.get(
-    '/',
-    requireAuth,
-    AuthController.roleAuthorization(['admin']),
-    trimRequest.all,
-    UserController.getItems
+  '/',
+  requireAuth,
+  AuthController.roleAuthorization(['admin']),
+  trimRequest.all,
+  UserController.getItems
 )
 
 /*
  * Create new item route
  */
 router.post(
-    '/',
-    requireAuth,
-    AuthController.roleAuthorization(['admin']),
-    trimRequest.all,
-    validate.createItem,
-    UserController.createItem
+  '/',
+  requireAuth,
+  AuthController.roleAuthorization(['admin']),
+  trimRequest.all,
+  validate.createItem,
+  UserController.createItem
 )
 
 /*
  * Get item route
  */
 router.get(
-    '/:id',
-    requireAuth,
-    AuthController.roleAuthorization(['admin']),
-    trimRequest.all,
-    validate.getItem,
-    UserController.getItem
+  '/:id',
+  requireAuth,
+  AuthController.roleAuthorization(['admin']),
+  trimRequest.all,
+  validate.getItem,
+  UserController.getItem
 )
 
 /*
  * Update item route
  */
 router.patch(
-    '/:id',
-    requireAuth,
-    AuthController.roleAuthorization(['admin']),
-    trimRequest.all,
-    validate.updateItem,
-    UserController.updateItem
+  '/:id',
+  requireAuth,
+  AuthController.roleAuthorization(['admin']),
+  trimRequest.all,
+  validate.updateItem,
+  UserController.updateItem
 )
 
 /*
  * Delete item route
  */
 router.delete(
-    '/:id',
-    requireAuth,
-    AuthController.roleAuthorization(['admin']),
-    trimRequest.all,
-    validate.deleteItem,
-    UserController.deleteItem
+  '/:id',
+  requireAuth,
+  AuthController.roleAuthorization(['admin']),
+  trimRequest.all,
+  validate.deleteItem,
+  UserController.deleteItem
 )
 
 module.exports = router

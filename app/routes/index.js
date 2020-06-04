@@ -13,23 +13,23 @@ router.use('/api', require('./auth'))
 
 // Loop routes path and loads every file as a route except this file and Auth route
 fs.readdirSync(routesPath).filter(file => {
-    // Take filename and remove last part (extension)
-    const routeFile = removeExtensionFromFile(file)
-    // Prevents loading of this file and auth file
-    return routeFile !== 'index' && routeFile !== 'auth'
-        ? router.use(`/api/${routeFile}`, require(`./${routeFile}`))
-        : ''
+  // Take filename and remove last part (extension)
+  const routeFile = removeExtensionFromFile(file)
+  // Prevents loading of this file and auth file
+  return routeFile !== 'index' && routeFile !== 'auth'
+    ? router.use(`/api/${routeFile}`, require(`./${routeFile}`))
+    : ''
 })
 
 /*
  * Handle 404 error
  */
 router.use('*', (req, res) => {
-    res.status(404).json({
-        errors: {
-            msg: 'URL_NOT_FOUND'
-        }
-    })
+  res.status(404).json({
+    errors: {
+      msg: 'URL_NOT_FOUND'
+    }
+  })
 })
 
 module.exports = router
