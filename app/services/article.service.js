@@ -8,16 +8,19 @@ const db = require('../middleware/db')
  */
 exports.createArticle = async req => {
   return new Promise((resolve, reject) => {
+    const { title, hashtags, contents } = req.body
+    const { _id } = req.user
     const article = new model({
-      title: req.name,
-      hashtags: req.hashtags,
-      contents: req.contents
+      title,
+      hashtags,
+      contents,
+      createdBy: _id
     })
     article.save((err, item) => {
       if (err) {
         reject(utils.buildErrObject(422, err.message))
       }
-      resolve(item.toObject())
+      resolve(item)
     })
   })
 }
@@ -29,7 +32,10 @@ exports.createArticle = async req => {
 exports.getArticles = async req => {
   const options = await db.listInitOptions(req)
   const populates = {
-    populate: 'createdBy'
+    populate: {
+      path: 'createdBy',
+      select: '_id name email'
+    }
   }
   const query = await db.checkQueryString(req.query)
   return new Promise((resolve, reject) => {
@@ -50,7 +56,10 @@ exports.getArticleById = async id => {
   return new Promise((resolve, reject) => {
     model
       .findOne({ _id: id })
-      .populate('createdBy')
+      .populate({
+        path: 'createdBy',
+        select: '_id name email'
+      })
       .exec((err, item) => {
         utils.itemNotFound(err, item, reject, 'NOT_FOUND')
         resolve(item)

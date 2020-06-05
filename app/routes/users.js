@@ -22,7 +22,7 @@ router.get(
   requireAuth,
   AuthController.roleAuthorization(['admin']),
   trimRequest.all,
-  UserController.getItems
+  UserController.getAll
 )
 
 /*
@@ -33,44 +33,37 @@ router.post(
   requireAuth,
   AuthController.roleAuthorization(['admin']),
   trimRequest.all,
-  validate.createItem,
-  UserController.createItem
+  // validate.createItem,
+  UserController.create
 )
 
 /*
  * Get item route
  */
-router.get(
-  '/:id',
-  requireAuth,
-  AuthController.roleAuthorization(['admin']),
-  trimRequest.all,
-  validate.getItem,
-  UserController.getItem
-)
+router.get('/:id', trimRequest.all, UserController.getById)
 
 /*
  * Update item route
  */
-router.patch(
-  '/:id',
-  requireAuth,
-  AuthController.roleAuthorization(['admin']),
-  trimRequest.all,
-  validate.updateItem,
-  UserController.updateItem
-)
+// router.patch(
+//   '/:id',
+//   requireAuth,
+//   AuthController.roleAuthorization(['admin']),
+//   trimRequest.all,
+//   validate.updateItem,
+//   UserController.updateItem
+// )
 
 /*
  * Delete item route
  */
-router.delete(
-  '/:id',
-  requireAuth,
-  AuthController.roleAuthorization(['admin']),
-  trimRequest.all,
-  validate.deleteItem,
-  UserController.deleteItem
-)
+// router.delete(
+//   '/:id',
+//   requireAuth,
+//   AuthController.roleAuthorization(['admin']),
+//   trimRequest.all,
+//   validate.deleteItem,
+//   UserController.deleteItem
+// )
 
 module.exports = router

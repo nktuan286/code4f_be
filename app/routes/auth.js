@@ -54,7 +54,7 @@ router.post(
 router.get(
   '/token',
   requireAuth,
-  AuthController.roleAuthorization(['visitor', 'admin']),
+  AuthController.roleAuthorization(['admin', 'creator']),
   trimRequest.all,
   AuthController.getRefreshToken
 )
