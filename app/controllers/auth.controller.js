@@ -18,13 +18,25 @@ exports.login = async (req, res) => {
       user.loginAttempts = 0
       await services.saveLoginAttemptsToDB(user)
       const userInfo = await services.saveUserAccessAndReturnToken(req, user)
-      res.cookie('token', userInfo.token, {
+      await res.cookie('token', userInfo.token, {
         expires: new Date(Date.now() + expiration),
         secure: false, // set to true if your using https
         httpOnly: true
       })
-      res.status(200).json(userInfo.user)
+      res.status(200).json({ data: userInfo.user, msg: 'LOGIN_SUCCESSFUL' })
     }
+  } catch (error) {
+    utils.handleError(res, error)
+  }
+}
+
+exports.logout = async (req, res) => {
+  try {
+    await req.logout()
+    await res.clearCookie('token')
+    res.status(200).json({
+      msg: 'LOGOUT_SUCCESSFUL'
+    })
   } catch (error) {
     utils.handleError(res, error)
   }

@@ -43,11 +43,13 @@ exports.handleError = (res, err) => {
   if (process.env.NODE_ENV === 'development') {
     console.log(err)
   }
+  let errorMsg = err.message
+  if (Array.isArray(errorMsg)) {
+    errorMsg = errorMsg[0].msg
+  }
   // Sends error to user
   res.status(err.code).json({
-    errors: {
-      msg: err.message
-    }
+    msg: errorMsg
   })
 }
 

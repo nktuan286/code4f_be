@@ -63,5 +63,6 @@ router.get(
  * Login route
  */
 router.post('/login', trimRequest.all, validate.login, AuthController.login)
+router.get('/logout', trimRequest.all, AuthController.logout)
 
 module.exports = router

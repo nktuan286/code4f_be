@@ -58,7 +58,16 @@ i18n.configure({
 app.use(i18n.init)
 
 // Init all other stuff
-app.use(cors())
+app.use(
+  cors({
+    origin: [
+      `${process.env.FRONTEND_URL}`,
+      'http://127.0.0.1:4600',
+      'https://code4f.com'
+    ],
+    credentials: true
+  })
+)
 app.use(cookieParser())
 app.use(passport.initialize())
 app.use(compression())

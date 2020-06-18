@@ -8,7 +8,7 @@ const uuid = require('uuid')
 const { addHours } = require('date-fns')
 const auth = require('../middleware/auth')
 const HOURS_TO_BLOCK = 1
-const LOGIN_ATTEMPTS = 6
+const LOGIN_ATTEMPTS = 10
 
 /**
  * Generates a token
@@ -41,8 +41,8 @@ exports.setUserInfo = req => {
   let user = {
     _id: req._id,
     name: req.name,
+    avatar: req.avatar,
     email: req.email,
-    role: req.role,
     verified: req.verified
   }
   // Adds verification for testing purposes
