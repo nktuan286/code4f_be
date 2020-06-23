@@ -1,7 +1,7 @@
 {
   "registration": {
-    "SUBJECT": "Verify your email at myProject",
-    "MESSAGE": "<p>Hello %s.</p> <p>Welcome! To verify your email, please click in this link:</p> <p>%s/verify/%s</p> <p>Thank you.</p>"
+    "SUBJECT": "Verify your email",
+    "MESSAGE": "<p>Hello %s.</p> <p>Welcome! To verify your email, please click in this link:</p> <a href=\"%s/verify/%s\" target=\"_blank\"> CLICK HERE TO VERIFY </a> <p>Thank you.</p>"
   },
   "forgotPassword": {
     "SUBJECT": "Password recovery at myProject",

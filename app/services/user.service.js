@@ -17,18 +17,62 @@ exports.getUsers = async req => {
 }
 
 /**
- * get user by id
+ * get user by username
  * @param {Object} req - request object
  */
-exports.getUserById = async id => {
+exports.getUserByUsername = async username => {
   return new Promise((resolve, reject) => {
     model
-      .findOne({ _id: id })
-      .select('_id name email verified verification phone country')
+      .findOne({ username })
+      .select('name username email bio country')
       .exec((err, item) => {
         utils.itemNotFound(err, item, reject, 'NOT_FOUND')
         resolve(item)
       })
+  })
+}
+
+/**
+ * Update user
+ * @param {Object} req - request object
+ */
+exports.updateUser = async (username, req) => {
+  return new Promise((resolve, reject) => {
+    const removeUnusedProperties = ({
+      // eslint-disable-next-line no-unused-vars
+      _id,
+      // eslint-disable-next-line no-unused-vars
+      email,
+      // eslint-disable-next-line no-unused-vars
+      role,
+      // eslint-disable-next-line no-unused-vars
+      verified,
+      // eslint-disable-next-line no-unused-vars
+      verification,
+      // eslint-disable-next-line no-unused-vars
+      blockExpires,
+      // eslint-disable-next-line no-unused-vars
+      loginAttempts,
+      // eslint-disable-next-line no-unused-vars
+      password,
+      ...rest
+    }) => rest
+    const data = removeUnusedProperties(req)
+
+    model.findOneAndUpdate(
+      {
+        username
+      },
+      data,
+      {
+        new: true,
+        runValidators: true
+      },
+      (err, item) => {
+        utils.itemNotFound(err, item, reject, 'NOT_FOUND')
+        resolve(item)
+      }
+    )
   })
 }
 
@@ -64,5 +108,18 @@ exports.createUser = async req => {
       }) => rest
       resolve(removeProperties(item))
     })
+  })
+}
+
+/**
+ * Checks ownership
+ * @param {Object} user - user object
+ */
+exports.checkOwnership = async (submitter, user) => {
+  return new Promise((resolve, reject) => {
+    if (submitter !== user.username) {
+      reject(utils.buildErrObject(409, 'ACCESS_DENIED'))
+    }
+    resolve(true)
   })
 }

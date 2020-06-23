@@ -8,6 +8,7 @@ exports.login = async (req, res) => {
     const user = await services.findUser(req.body.email)
     const expiration =
       Math.floor(Date.now() / 1000) + 60 * process.env.JWT_EXPIRATION_IN_MINUTES
+    await services.checkVerified(user)
     await services.userIsBlocked(user)
     await services.checkLoginAttemptsAndBlockExpires(user)
     const isPasswordMatch = await auth.checkPassword(req.body.password, user)
@@ -88,6 +89,24 @@ exports.resetPassword = async (req, res) => {
     await services.updatePassword(req.body.password, user)
     const result = await services.markResetPasswordAsUsed(req, forgotPassword)
     res.status(200).json(result)
+  } catch (error) {
+    utils.handleError(res, error)
+  }
+}
+
+exports.changePassword = async (req, res) => {
+  try {
+    const user = await services.findUser(req.user.email)
+    const isPasswordMatch = await auth.checkPassword(
+      req.body.currentPassword,
+      user
+    )
+    if (!isPasswordMatch) {
+      utils.handleError(res, { code: 409, message: 'PASSWORD_NOT_MATCH' })
+    } else {
+      const result = await services.updatePassword(req.body.password, user)
+      res.status(200).json({ data: result, msg: 'CHANGE_PASSWORD_SUCCESFUL' })
+    }
   } catch (error) {
     utils.handleError(res, error)
   }

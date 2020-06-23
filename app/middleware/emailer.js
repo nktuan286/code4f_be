@@ -1,5 +1,5 @@
 const nodemailer = require('nodemailer')
-const mg = require('nodemailer-mailgun-transport')
+// const mg = require('nodemailer-mailgun-transport')
 const i18n = require('i18n')
 const User = require('../models/user')
 const { itemAlreadyExists } = require('../middleware/utils')
@@ -10,14 +10,20 @@ const { itemAlreadyExists } = require('../middleware/utils')
  * @param {boolean} callback - callback
  */
 const sendEmail = async (data, callback) => {
-  const auth = {
+  const mailConfig = {
+    host: process.env.EMAIL_HOST,
+    port: 465,
+    secure: true,
     auth: {
-      // eslint-disable-next-line camelcase
-      api_key: process.env.EMAIL_SMTP_API_MAILGUN,
-      domain: process.env.EMAIL_SMTP_DOMAIN_MAILGUN
+      user: process.env.EMAIL_FROM_ADDRESS,
+      pass: process.env.EMAIL_FROM_PASSWORD
+    },
+    tls: {
+      // do not fail on invalid certs
+      rejectUnauthorized: false
     }
   }
-  const transporter = nodemailer.createTransport(mg(auth))
+  const transporter = nodemailer.createTransport(mailConfig)
   const mailOptions = {
     from: `${process.env.EMAIL_FROM_NAME} <${process.env.EMAIL_FROM_ADDRESS}>`,
     to: `${data.user.name} <${data.user.email}>`,
@@ -25,6 +31,7 @@ const sendEmail = async (data, callback) => {
     html: data.htmlMessage
   }
   transporter.sendMail(mailOptions, err => {
+    console.log({ mailOptions, err })
     if (err) {
       return callback(false)
     }
@@ -56,7 +63,11 @@ const prepareToSendEmail = (user, subject, htmlMessage) => {
         : console.log(`Email FAILED to: ${user.email}`)
     )
   } else if (process.env.NODE_ENV === 'development') {
-    console.log(data)
+    sendEmail(data, messageSent =>
+      messageSent
+        ? console.log(`Email SENT to: ${user.email}`)
+        : console.log(`Email FAILED to: ${user.email}`)
+    )
   }
 }
 

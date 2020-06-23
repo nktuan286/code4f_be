@@ -1,5 +1,6 @@
 const utils = require('../middleware/utils')
 const emailer = require('../middleware/emailer')
+const auth = require('../middleware/auth')
 const services = require('../services/user.service')
 
 exports.getAll = async (req, res) => {
@@ -11,30 +12,26 @@ exports.getAll = async (req, res) => {
   }
 }
 
-exports.getById = async (req, res) => {
+exports.getByUsername = async (req, res) => {
   try {
-    const id = await utils.isIDGood(req.params.id)
-    const result = await services.getUserById(id)
+    const { username } = req.params
+    const result = await services.getUserByUsername(username)
     res.status(200).json(result)
   } catch (error) {
     utils.handleError(res, error)
   }
 }
 
-// exports.updateItem = async (req, res) => {
-//   try {
-//     const id = await utils.isIDGood(req.params.id)
-//     const doesEmailExists = await emailer.emailExistsExcludingMyself(
-//       id,
-//       req.body.email
-//     )
-//     if (!doesEmailExists) {
-//       res.status(200).json(await db.updateItem(id, model, req))
-//     }
-//   } catch (error) {
-//     utils.handleError(res, error)
-//   }
-// }
+exports.update = async (req, res) => {
+  try {
+    const { username } = req.params
+    await services.checkOwnership(username, req.user)
+    const result = await services.updateUser(username, req.body)
+    res.status(200).json({ data: result, msg: 'UPDATE_SUCCESSFUL' })
+  } catch (error) {
+    utils.handleError(res, error)
+  }
+}
 
 exports.create = async (req, res) => {
   try {

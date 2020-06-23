@@ -1,4 +1,4 @@
-const UserController = require('../controllers/users.controller')
+const UserController = require('../controllers/user.controller')
 // const validate = require('../validation/users.validate')
 const AuthController = require('../controllers/auth.controller')
 const express = require('express')
@@ -40,19 +40,19 @@ router.post(
 /*
  * Get item route
  */
-router.get('/:id', trimRequest.all, UserController.getById)
+router.get('/:username', trimRequest.all, UserController.getByUsername)
 
 /*
  * Update item route
  */
-// router.patch(
-//   '/:id',
-//   requireAuth,
-//   AuthController.roleAuthorization(['admin']),
-//   trimRequest.all,
-//   validate.updateItem,
-//   UserController.updateItem
-// )
+router.put(
+  '/:username',
+  requireAuth,
+  AuthController.roleAuthorization(['admin', 'creator']),
+  trimRequest.all,
+  // validate.updateItem,
+  UserController.update
+)
 
 /*
  * Delete item route

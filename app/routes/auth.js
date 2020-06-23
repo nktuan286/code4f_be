@@ -49,6 +49,17 @@ router.post(
 )
 
 /*
+ * Change password route
+ */
+router.post(
+  '/change',
+  requireAuth,
+  trimRequest.all,
+  // validate.resetPassword,
+  AuthController.changePassword
+)
+
+/*
  * Get new refresh token
  */
 router.get(

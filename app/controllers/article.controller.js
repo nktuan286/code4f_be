@@ -28,3 +28,12 @@ exports.create = async (req, res) => {
     utils.handleError(res, error)
   }
 }
+
+exports.like = async (req, res) => {
+  try {
+    const result = await services.likeArticleById(req)
+    res.status(201).json(result)
+  } catch (error) {
+    utils.handleError(res, error)
+  }
+}

@@ -52,17 +52,65 @@ exports.getArticles = async req => {
  * get article by id
  * @param {Object} req - request object
  */
-exports.getArticleById = async id => {
+exports.getArticleById = id => {
   return new Promise((resolve, reject) => {
     model
       .findOne({ _id: id })
-      .populate({
-        path: 'createdBy',
-        select: '_id name email'
-      })
-      .exec((err, item) => {
+      .populate([
+        {
+          path: 'createdBy',
+          select: '_id name username email'
+        },
+        {
+          path: 'comments',
+          populate: [
+            {
+              path: 'replies',
+              populate: {
+                path: 'sentBy',
+                select: '_id name username email'
+              }
+            },
+            {
+              path: 'sentBy',
+              select: '_id name username email'
+            }
+          ]
+        }
+      ])
+      .exec(async (err, item) => {
         utils.itemNotFound(err, item, reject, 'NOT_FOUND')
+        item.views += 1
+        await item.save()
         resolve(item)
       })
+  })
+}
+
+/**
+ * like article
+ * @param {Object} req - request object
+ */
+exports.likeArticleById = req => {
+  return new Promise((resolve, reject) => {
+    const { _id } = req.user
+    model.findOneAndUpdate(
+      {
+        _id: req.params.id
+      },
+      {
+        $push: {
+          likes: _id
+        }
+      },
+      {
+        new: true,
+        runValidators: true
+      },
+      (error, item) => {
+        utils.itemNotFound(error, item, reject, 'NOT_FOUND')
+        resolve(item)
+      }
+    )
   })
 }

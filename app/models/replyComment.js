@@ -1,18 +1,12 @@
 const mongoose = require('mongoose')
 const mongoosePaginate = require('mongoose-paginate-v2')
 
-const CommentSchema = new mongoose.Schema(
+const ReplyCommentSchema = new mongoose.Schema(
   {
     content: {
       type: String,
       required: true
     },
-    replies: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'ReplyComment'
-      }
-    ],
     sentBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User'
@@ -24,5 +18,5 @@ const CommentSchema = new mongoose.Schema(
   }
 )
 
-CommentSchema.plugin(mongoosePaginate)
-module.exports = mongoose.model('Comment', CommentSchema)
+ReplyCommentSchema.plugin(mongoosePaginate)
+module.exports = mongoose.model('ReplyComment', ReplyCommentSchema)

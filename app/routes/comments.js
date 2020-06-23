@@ -1,4 +1,4 @@
-const ArticleController = require('../controllers/article.controller')
+const CommentController = require('../controllers/comment.controller')
 // const validate = require('../validation/users.validate')
 const AuthController = require('../controllers/auth.controller')
 const express = require('express')
@@ -11,16 +11,7 @@ const requireAuth = passport.authenticate('jwt', {
 const trimRequest = require('trim-request')
 
 /*
- * Articles routes
- */
-
-/*
- * Get articles route
- */
-router.get('/', trimRequest.all, ArticleController.getAll)
-
-/*
- * Create new article route
+ * Send comment
  */
 router.post(
   '/',
@@ -28,29 +19,19 @@ router.post(
   AuthController.roleAuthorization(['admin', 'creator']),
   trimRequest.all,
   // validate.createItem,
-  ArticleController.create
+  CommentController.create
 )
 
 /*
- * like article route
+ * Reply comment
  */
-router.put(
-  '/:id',
+router.post(
+  '/reply',
   requireAuth,
   AuthController.roleAuthorization(['admin', 'creator']),
   trimRequest.all,
   // validate.createItem,
-  ArticleController.like
-)
-
-/*
- * Get article route
- */
-router.get(
-  '/:id',
-  trimRequest.all,
-  // validate.getItem,
-  ArticleController.getById
+  CommentController.reply
 )
 
 module.exports = router

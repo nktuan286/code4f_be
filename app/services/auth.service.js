@@ -41,7 +41,10 @@ exports.setUserInfo = req => {
   let user = {
     _id: req._id,
     name: req.name,
+    username: req.username,
     avatar: req.avatar,
+    bio: req.bio,
+    country: req.country,
     email: req.email,
     verified: req.verified
   }
@@ -218,9 +221,11 @@ exports.registerUser = async req => {
     const { _id } = await Role.findOne({ name: 'creator' })
       .lean()
       .exec()
+    const username = req.body.email
     const user = new User({
       name: req.body.name,
       email: req.body.email,
+      username: username.substring(0, username.indexOf('@')) || '',
       password: req.body.password,
       role: _id,
       verification: uuid.v4()
@@ -243,11 +248,7 @@ exports.returnRegisterToken = (item, userInfo) => {
   if (process.env.NODE_ENV !== 'production') {
     userInfo.verification = item.verification
   }
-  const data = {
-    token: this.generateToken(item._id),
-    user: userInfo
-  }
-  return data
+  return userInfo
 }
 
 /**
@@ -289,6 +290,19 @@ exports.verifyUser = async user => {
 }
 
 /**
+ * Checks if email is not verified yet
+ * @param {Object} user - user object
+ */
+exports.checkVerified = async user => {
+  return new Promise((resolve, reject) => {
+    if (!user.verified) {
+      reject(utils.buildErrObject(409, 'EMAIL_IS_NOT_VERIFIED'))
+    }
+    resolve(true)
+  })
+}
+
+/**
  * Marks a request to reset password as used
  * @param {Object} req - request object
  * @param {Object} forgot - forgot object
@@ -316,7 +330,8 @@ exports.updatePassword = async (password, user) => {
     user.password = password
     user.save((err, item) => {
       utils.itemNotFound(err, item, reject, 'NOT_FOUND')
-      resolve(item)
+      const userInfo = this.setUserInfo(item)
+      resolve(userInfo)
     })
   })
 }

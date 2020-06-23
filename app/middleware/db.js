@@ -15,36 +15,6 @@ const buildSort = (sort, order) => {
   return sortBy
 }
 
-/**
- * Hack for mongoose-paginate, removes 'id' from results
- * @param {Object} result - result object
- */
-const cleanPaginationID = result => {
-  result.docs.map(element => delete element.id)
-  return result
-}
-
-/**
- * Builds initial options for query
- * @param {Object} query - query object
- */
-const listInitOptions = async req => {
-  return new Promise(resolve => {
-    const order = req.query.order || -1
-    const sort = req.query.sort || 'createdAt'
-    const sortBy = buildSort(sort, order)
-    const page = parseInt(req.query.page, 10) || 1
-    const limit = parseInt(req.query.limit, 10) || 5
-    const options = {
-      sort: sortBy,
-      lean: true,
-      page,
-      limit
-    }
-    resolve(options)
-  })
-}
-
 module.exports = {
   /**
    * Hack for mongoose-paginate, removes 'id' from results
@@ -112,73 +82,6 @@ module.exports = {
         console.log(err.message)
         reject(buildErrObject(422, 'ERROR_WITH_FILTER'))
       }
-    })
-  },
-
-  /**
-   * Gets items from database
-   * @param {Object} req - request object
-   * @param {Object} query - query object
-   */
-  async getItems(req, model, query) {
-    const options = await listInitOptions(req)
-    return new Promise((resolve, reject) => {
-      model.paginate(query, options, (err, items) => {
-        if (err) {
-          reject(buildErrObject(422, err.message))
-        }
-        resolve(cleanPaginationID(items))
-      })
-    })
-  },
-
-  /**
-   * Gets item from database by id
-   * @param {string} id - item id
-   */
-  async getItem(id, model) {
-    return new Promise((resolve, reject) => {
-      model.findById(id, (err, item) => {
-        itemNotFound(err, item, reject, 'NOT_FOUND')
-        resolve(item)
-      })
-    })
-  },
-
-  /**
-   * Creates a new item in database
-   * @param {Object} req - request object
-   */
-  async createItem(req, model) {
-    return new Promise((resolve, reject) => {
-      model.create(req, (err, item) => {
-        if (err) {
-          reject(buildErrObject(422, err.message))
-        }
-        resolve(item)
-      })
-    })
-  },
-
-  /**
-   * Updates an item in database by id
-   * @param {string} id - item id
-   * @param {Object} req - request object
-   */
-  async updateItem(id, model, req) {
-    return new Promise((resolve, reject) => {
-      model.findByIdAndUpdate(
-        id,
-        req,
-        {
-          new: true,
-          runValidators: true
-        },
-        (err, item) => {
-          itemNotFound(err, item, reject, 'NOT_FOUND')
-          resolve(item)
-        }
-      )
     })
   },
 

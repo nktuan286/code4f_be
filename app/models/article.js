@@ -17,21 +17,27 @@ const ArticleSchema = new mongoose.Schema(
     },
     comments: [
       {
-        message: {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: 'Comment'
-        },
-        replyMessage: [
-          {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'Comment'
-          }
-        ]
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Comment'
+      }
+    ],
+    likes: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
       }
     ],
     createdBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User'
+    },
+    views: {
+      type: Number,
+      default: 0
+    },
+    status: {
+      type: Boolean,
+      default: false
     }
   },
   {
